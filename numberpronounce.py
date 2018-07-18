@@ -51,7 +51,7 @@ else:
             print(data.position[pos], end =' ')
             pos -= 1
 
-    if '.' in sys.argv[1]:
+    if int(numbers[1]) != 0:
         print("point", end = ' ')
         number = numbers[1]
         for c in number:
