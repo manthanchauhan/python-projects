@@ -1,2 +1,2 @@
 # python-projects
-small python projects
+All of my small python projects are here
