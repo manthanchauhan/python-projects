@@ -1,0 +1,8 @@
+Hi ${reciever_name},
+This is to inform you that Techtronix Orientation has been rescheduled to 3:00 pm on 7th September. We apologize for any misconvenience.
+We hope to see you on 7th September in room 401A.
+
+For any Queries write to us at Techtronix.mait@gmail.com or contact 7042756268 (Manthan).
+
+Happy Learning, 
+Techtronix Team
