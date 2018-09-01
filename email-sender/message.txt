@@ -1,5 +1,5 @@
 Hi ${reciever_name},<br>
-This is to inform you that <b>Techtronix</b> in collaboration with <b>Aptron Technologies</b> is presenting a workshop on <b>AVR Microcontroller</b> on <b>5th September, 1:00 pm onwards</b> in <b>Room no. 401A</b>.<br>
+This is to inform you that <b>Techtronix</b> the official ECE society of MAIT in collaboration with <b>Aptron Technologies</b> is presenting a workshop on <b>AVR Microcontroller</b> on <b>5th September, 1:00 pm onwards</b> in <b>Room no. 401A</b>.<br>
 Interested students please regiser at <b>7042756268 (Manthan)</b>.<br>
 The workshop is <b>only for ECE students</b>.<br>
 <br>
