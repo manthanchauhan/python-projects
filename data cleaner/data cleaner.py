@@ -19,7 +19,7 @@ import os
 
 datafile = 'D:\Git\python-projects\data cleaner\data.csv'
 outputfile = 'D:\Git\python-projects\data cleaner\dataout.csv'
-columns_to_drop = [0, 1]
+columns_to_drop = [0]
 column_names = ['Enrollment No.', 'Name', 'Group']
 Sno_add = True
 sorter = 'Name'
