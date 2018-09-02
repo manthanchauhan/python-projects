@@ -19,7 +19,9 @@ import os
 
 datafile = 'D:\Git\python-projects\data cleaner\data.csv'
 outputfile = 'D:\Git\python-projects\data cleaner\dataout.csv'
-columns_to_drop = [0]
+columns_by_labels = False
+col_labels = ['S. No']
+col_indices = [0]
 column_names = ['Enrollment No.', 'Name', 'Group']
 Sno_add = True
 sorter = 'Name'
@@ -27,7 +29,10 @@ sorter = 'Name'
 df = pandas.read_csv(datafile)
 df[sorter] = correct_names(df, sorter)
 df.sort_values(by= sorter, axis= 0, ascending= True, inplace=True)
-df.drop(labels=df.columns[columns_to_drop], axis=1, inplace= True)
+if columns_by_labels:
+    df.drop(labels=col_labels, axis=1, inplace= True)
+else:
+    df.drop(labels=df.columns[col_indices], axis=1, inplace= True)
 df.columns = column_names
 rows = df.shape[0]
 if Sno_add:
