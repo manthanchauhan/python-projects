@@ -4,16 +4,16 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-datafile_address = 'D:\Git\python-projects\email-sender\Book1.csv'
+datafile_address = 'D:\Git\python-projects\email-sender\data.csv'
 messagefile_address = 'D:\Git\python-projects\email-sender\message.txt'
-my_email = 'manthanchauhan913@gmail.com'
-my_password = 'password'
-email_subject = 'subject of email'
+my_email = 'techtronix@gmail.com'
+my_password = 'tech@mait'
+email_subject = 'Confirmation for Orientation'
 
-def read_data():
+def read_data(datafile_address):
     filename = datafile_address
     data = pandas.read_csv(filename)
-    contacts = list(zip(data['name'], data['email']))
+    contacts = list(zip(data['Name'], data['Email']))
     return contacts
 def read_msg():
     filename = messagefile_address
@@ -26,7 +26,7 @@ def create_channel():
     s.login(my_email, my_password)
     return s    
 
-contacts = read_data()
+contacts = read_data(datafile_address)
 template = read_msg()
 channel = create_channel()
 sent = 0

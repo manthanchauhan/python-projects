@@ -1,9 +1,8 @@
 Hi ${reciever_name},<br>
-This is to inform you that <b>Techtronix</b> the official ECE society of MAIT in collaboration with <b>Aptron Technologies</b> is presenting a workshop on <b>AVR Microcontroller</b> on <b>5th September, 1:00 pm onwards</b> in <b>Room no. 401A</b>.<br>
-Interested students please regiser at <b>7042756268 (Manthan)</b>.<br>
-The workshop is <b>only for ECE students</b>.<br>
+This is to remind you that <b>Techtronix Orientation</b> which is scheduled for <b>7th september</b> in room <b>401 A</b> will start at <b>3:00 PM</b> sharp.<br>
+We hope to see you in the orientation. In case you are unable to join us please inform us at <b>techtronix.mait@gmail.com</b> or contact <b> Manthan (7042756268)</b>.<br>
 <br>
-For any Queries write to us at Techtronix.mait@gmail.com or contact 7042756268 (Manthan).<br>
+For any Queries write to us at techtronix.mait@gmail.com or contact 7042756268 (Manthan).<br>
 <br>
 Happy Learning,<br> 
 Techtronix Team

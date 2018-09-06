@@ -35,4 +35,6 @@ def cleaner(datafile, columns_by_labels, drop, col_to_drop, column_names, Sno_ad
     os.remove(datafile)
     os.rename(outputfile, datafile)
 if __name__ == '__main__':
-    cleaner(datafile=)
+    data = 'D:\Git\python-projects\data cleaner\data.csv'
+    cleaner(datafile=data, columns_by_labels=False, drop=True, col_to_drop=[0], column_names=['Name', 'Email', 'Contact', 'Year'], Sno_add=True, sorter='Name')
+    print('Sorted')
