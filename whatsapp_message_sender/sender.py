@@ -7,12 +7,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import urllib
 
-name="ram"
-msg_address = 'D:\Git\python-projects\whatsapp_message_sender\message.txt'
-chrome_driver = 'D:\Git\python-projects\whatsapp_message_sender\chromedriver.exe'
-searchbox = '//input[@class="jN-F5 copyable-text selectable-text"]'
-messagebox = '//div[@class="_2S1VP copyable-text selectable-text"]'
-
 def read_message():
     msgfile = open(msg_address, 'r')
     msg = msgfile.read()
@@ -38,7 +32,14 @@ def sendmsg(name):
     except:
         print('message was not sent to: ' + name)
 
-driver = login()
-message = read_message()
-sendmsg(name)
-driver.quit()
+if __name__== '__main__':
+    name="Mummy"
+    msg_address = 'D:\Git\python-projects\whatsapp_message_sender\message.txt'
+    chrome_driver = 'D:\Git\python-projects\whatsapp_message_sender\chromedriver.exe'
+    searchbox = '//input[@class="jN-F5 copyable-text selectable-text"]'
+    messagebox = '//div[@class="_2S1VP copyable-text selectable-text"]'
+   
+    driver = login()
+    message = read_message()
+    sendmsg(name)
+    driver.quit()
