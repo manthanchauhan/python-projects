@@ -33,7 +33,7 @@ def sendmsg(name):
         print('message was not sent to: ' + name)
 
 if __name__== '__main__':
-    names = ['Mummy', 'Madhav', 'Harshita', 'Aditya', 'Anurag Pandey']
+    names = ['Mummy', 'Madhav', 'test contact']
     msg_address = 'D:\Git\python-projects\whatsapp_message_sender\message.txt'
     chrome_driver = 'D:\Git\python-projects\whatsapp_message_sender\chromedriver.exe'
     searchbox = '//input[@class="jN-F5 copyable-text selectable-text"]'

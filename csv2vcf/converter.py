@@ -1,9 +1,9 @@
 import pandas
 import os
 
-if __name__=='__main__':
-    datafile = 'D:\Git\python-projects\csv2vcf\data.csv'
+def convert_to_vcf(datafile):
     outputfile = datafile[:-4] + 'vcard.txt'
+    os.remove(datafile[:-3] + 'vcf')
     vcf = open(outputfile, "w+")
     df = pandas.read_csv(datafile)
     for indx, row in df.iterrows():
@@ -18,6 +18,10 @@ if __name__=='__main__':
         vcf.write('END:VCARD\n')
     vcf.close()
     os.rename(outputfile, datafile[:-3] + 'vcf')
+
+if __name__=='__main__':
+    datafile = 'D:\Git\python-projects\csv2vcf\data.csv'
+    convert_to_vcf(datafile)    
 
 
 
