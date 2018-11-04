@@ -1,3 +1,4 @@
 Hi *${name}*,
-This message was sent using python!!
-It was a project testing *please ignore*.
+We *Techtronix*, need a little favor from you.
+Please print your name on 16x2 alphanumeric LCD and send a *screenshot* of *proteus simulation*.
+It'll be fun.

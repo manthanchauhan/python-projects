@@ -3,6 +3,7 @@ import random
 import time
 import tkinter
 from string import Template
+from tkinter.constants import Y, YES
 
 
 def probability(stat):
@@ -140,17 +141,17 @@ def make_move(player, move):
 # graphics..............................................................................................................
 main_window = tkinter.Tk()
 main_window1 = tkinter.Frame(main_window, bg='black', bd=5)
-main_window1.pack(side='top')
+main_window1.pack(side='top', expand=YES, fill=Y)
 main_window2 = tkinter.Frame(main_window)
 main_window2.pack(side='bottom')
 # main_window1
 proceed_button = tkinter.Button(main_window1, bg='maroon2', font=('Arial', 14, 'bold'), height=3, width=7,
                                 text='Proceed', command=proceed)
-proceed_button.pack(side='right')
+proceed_button.pack(side='right', fill=Y, expand=YES)
 text = tkinter.Text(main_window1, bg='PeachPuff2', font=('Arial', 14, 'bold'), width=36, height=3)
 text.insert(1.0, 'Hi!!!, Welcome in "POKEMON GO".\n')
 text.insert(2.0, 'Choose one of the three stats to fight battles.')
-text.pack(side='left')
+text.pack(side='left', fill=Y, expand=YES)
 # main_window2
 player_arena = tkinter.Frame(main_window2, bd=10, bg='OliveDrab1')
 player_arena.pack(side='left')
@@ -174,7 +175,7 @@ card_c = tkinter.Frame(computer_arena, bd=4, bg='cornflower blue')
 card_c.pack(side='top')
 card_p = tkinter.Frame(player_arena, bd=4, bg='purple1')
 card_p.pack(side='top')
-pokeball = tkinter.PhotoImage(file='pokeball.png')
+pokeball = tkinter.PhotoImage(file='D:\Git\python-projects\Pokemon game\pokeball.png')
 # player's card
 image_p = tkinter.Label(card_p, image=pokeball, width=217)
 image_p.pack(side='top')
@@ -259,7 +260,7 @@ defense_c.set('Defense: ')
 update = True
 
 # game starts...........................................................................................................
-df = pd.read_csv('pokemon.csv')
+df = pd.read_csv('D:\Git\python-projects\Pokemon game\Pokemon.csv')
 cards = {}
 for index, row in df.iterrows():
     cards[row['Name']] = (str(row['Type 1']), int(row['HP']), int(row['Attack']), int(row['Defense']))
