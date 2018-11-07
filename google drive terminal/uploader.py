@@ -83,7 +83,6 @@ class DriveClient(object):
         args = parser.parse_args(sys.argv[2:])
         page_token = None
         fileID = None
-        MimeType = 'bin'
         while True:
             param = {}
             if page_token:
@@ -94,28 +93,24 @@ class DriveClient(object):
                 if File['name'] == args.filename:
                     fileID = File['id']
                     if File['mimeType'].find('google') != -1:
-                        # print(File['mimeType'])
-                        if File['mimeType'].find('folder') != -1:
-                            print("folders can't be downloaded")
-                            sys.exit()
-                        MimeType = File['mimeType'] 
+                        print('use export method for google docs')
+                        sys.exit()
                     break
             if fileID != None:
                 break
             page_token = files.get('nextPageToken')
             if not page_token:
                 break
-        # print(fileID)
-        if MimeType == 'bin':
-            request = self.service.files().get_media(fileId= fileID)
-        else:
-            request = self.service.files().export_media(fileId= fileID, mimeType= MimeType)
+        if fileID is None:
+            print('file not found')
+            sys.exit()
+        request = self.service.files().get_media(fileId= fileID)
         fh = io.BytesIO()
         downloader = googleapiclient.http.MediaIoBaseDownload(fh, request)
         done = False
         while not done:
             status, done = downloader.next_chunk()
-            print('Downloaded %d'%(status.progress()*100))
+            print('Downloaded %d%'%(status.progress()*100))
         with open(args.adress, 'wb') as File:
             File.write(fh.getvalue())
         File.close()
