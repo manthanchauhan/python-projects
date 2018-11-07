@@ -11,6 +11,23 @@ import io
 import http
 
 
+export_dict = {'document': [('html','text/html'), ('zip','application/zip'), ('txt','text/plain'), 
+                        ('rtf', 'application/rtf'), ('odt','application/vnd.oasis.opendocument.text'),
+                        ('pdf', 'application/pdf'), ('epub','application/epub+zip'),
+                        ('docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+                        ],
+            'spreadsheet': [('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+                        ('ods','application/x-vnd.oasis.opendocument.spreadsheet'),('pdf','application/pdf'),
+                        ('csv','text/csv'), ('txt','text/tab-separated-values'),('zip','application/zip'),
+                        ],
+            'presentation': [('pptx','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
+                        ('odp','application/vnd.oasis.opendocument.presentation'), ('pdf','application/pdf'),
+                        ('txt','text/plain')
+                        ],
+            'drawing': [('jpeg','image/jpeg'), ('png','image/png'), ('xml','image/svg+xml'), ('pdf','application/pdf')
+                        ]}
+
+
 SCOPES = 'https://www.googleapis.com/auth/drive'
 warnings.filterwarnings('ignore')
 token = 'D:\Git\python-projects\google drive terminal\\token.json'
@@ -35,7 +52,7 @@ class DriveClient(object):
             getattr(self, args.command)()
         except AttributeError:
             print('Invalid command')
-            print('for help use: "Drive client -h" or "DriveClient --help"')
+            print('for help use: "DriveClient -h" or "DriveClient --help"')
     
     def logout(self):
         try:
@@ -120,12 +137,77 @@ class DriveClient(object):
         if args.address == 'default':
             address = download_path + args.filename
         else:
-            address = args.address    
+            address = args.address
         with open(address, 'wb') as File:
             File.write(fh.getvalue())
         File.close()
         print(args.filename + ' was downloaded successfully')
         sys.exit()
+
+    def export(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('filename', help='name of file to export', action='store')
+        parser.add_argument('format', help='format to export to', action='store')
+        parser.add_argument('address', help='address to export, "default" for default address', action='store')
+        args = parser.parse_args(sys.argv[2:])
+        page_token = None
+        fileID = None
+        MimeType = None
+        while True:
+            param = {}
+            if page_token:
+                param['pageToken'] = page_token
+            files = self.service.files().list(**param).execute()
+            Files = files['files']
+            for File in Files:
+                if File['name'] == args.filename:
+                    MimeType = File['mimeType']
+                    fileID = File['id']
+                    if File['mimeType'].find('google') == -1:
+                        print('export is only used for google docs, use download otherwise.')
+                        sys.exit()
+                    if File['mimeType'].find('folder') != -1:
+                        print('folders cannot be exported')
+                        sys.exit()
+                    break
+            if fileID != None:
+                break
+            page_token = files.get('nextPageToken')
+            if not page_token:
+                break
+        if fileID is None:
+            print('file not found')
+            sys.exit()
+        fileType = MimeType[28:]
+        if fileType not in export_dict.keys():
+            print('unsupported format')
+            sys.exit()
+        MimeType = None
+        for tupl in export_dict[fileType]:
+            if tupl[0] == args.format:
+                MimeType = tupl[1]
+                break
+        if MimeType == None:
+            print('choose a valid format')
+            sys.exit()
+        request = self.service.files().export_media(fileId= fileID, mimeType=MimeType)
+        fh = io.BytesIO()
+        downloader = googleapiclient.http.MediaIoBaseDownload(fh, request)
+        # print('Hi')
+        done = False
+        while not done:
+            status, done = downloader.next_chunk()
+            print('Downloaded %d'%(status.progress()*100))
+        if args.address == 'default':
+            address = download_path + args.filename + '.' + args.format
+        else:
+            address = args.address + '.' + args.format
+        with open(address, 'wb') as File:
+            File.write(fh.getvalue())
+        File.close()
+        print(args.filename + ' was downloaded successfully')
+        sys.exit()
+
 
 if __name__ == '__main__':
     DriveClient()
