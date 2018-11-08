@@ -8,6 +8,8 @@ import sys
 import os
 import argparse
 import io
+from mimetypes import MimeTypes
+import urllib.request
 import http
 
 
@@ -25,7 +27,7 @@ export_dict = {'document': [('html','text/html'), ('zip','application/zip'), ('t
                         ('txt','text/plain')
                         ],
             'drawing': [('jpeg','image/jpeg'), ('png','image/png'), ('xml','image/svg+xml'), ('pdf','application/pdf')
-                        ]}
+            ]}
 
 
 SCOPES = 'https://www.googleapis.com/auth/drive'
@@ -60,7 +62,6 @@ class DriveClient(object):
         except FileNotFoundError:
             pass
         print('logged out successfully')
-        sys.exit()
 
     def listfiles(self):
         parser = argparse.ArgumentParser(description='view files')
@@ -97,7 +98,6 @@ class DriveClient(object):
                             print('\t' + tpl + ' : ' + str(result[i][tpl]))
             except:
                 print('[' + str(i+1) + '] -----<encoding error in filename>-----')
-        sys.exit()  
 
     def download(self):
         parser = argparse.ArgumentParser()
@@ -133,7 +133,8 @@ class DriveClient(object):
         done = False
         while not done:
             status, done = downloader.next_chunk()
-            print('Downloaded %d'%(status.progress()*100))
+            print('%d'%(status.progress()*100), end='%')
+            print(' Downloaded')
         if args.address == 'default':
             address = download_path + args.filename
         else:
@@ -142,7 +143,6 @@ class DriveClient(object):
             File.write(fh.getvalue())
         File.close()
         print(args.filename + ' was downloaded successfully')
-        sys.exit()
 
     def export(self):
         parser = argparse.ArgumentParser()
@@ -193,11 +193,11 @@ class DriveClient(object):
         request = self.service.files().export_media(fileId= fileID, mimeType=MimeType)
         fh = io.BytesIO()
         downloader = googleapiclient.http.MediaIoBaseDownload(fh, request)
-        # print('Hi')
         done = False
         while not done:
             status, done = downloader.next_chunk()
-            print('Downloaded %d'%(status.progress()*100))
+            print('%d'%(status.progress()*100), end='%')
+            print(' Downloaded')
         if args.address == 'default':
             address = download_path + args.filename + '.' + args.format
         else:
@@ -206,8 +206,36 @@ class DriveClient(object):
             File.write(fh.getvalue())
         File.close()
         print(args.filename + ' was downloaded successfully')
-        sys.exit()
 
+    def upload(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('filename', help='name of file to upload', action='store')
+        parser.add_argument('address', help='drive: upload in drive, folder: upload in a folder', action='store')
+        args = parser.parse_args(sys.argv[2:])
+        try:
+            stats = os.stat(args.filename)
+        except FileNotFoundError:
+            print('file does not exists')
+            sys.exit()
+        size = stats.st_size
+        slash = args.filename.rfind('\\')
+        if slash == -1:
+            name = args.filename
+        else:
+            name = args.filename[slash:]
+        if args.address == 'drive':
+            metaData = {'name': name}
+            mime = MimeTypes()
+            url = urllib.request.pathname2url(args.filename)
+            MimeType = mime.guess_type(url)[0]
+        elif args.address == 'folder':
+            pass
+        if size <= 5*(10**6):
+            media = googleapiclient.http.MediaFileUpload(args.filename, mimetype=MimeType)
+        else:
+            media = googleapiclient.http.MediaFileUpload(args.filename, mimetype=MimeType, resumable=True)
+        request = self.service.files().create(body=metaData, media_body=media, fields='id').execute()
+        print('file uploaded successfully')
 
 if __name__ == '__main__':
     DriveClient()
