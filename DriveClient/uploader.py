@@ -1,4 +1,3 @@
-from __future__ import print_function
 from googleapiclient.discovery import build
 import googleapiclient
 from httplib2 import Http
@@ -30,31 +29,35 @@ export_dict = {'document': [('html','text/html'), ('zip','application/zip'), ('t
             ]}
 
 
-SCOPES = 'https://www.googleapis.com/auth/drive'
+scopes = ['https://www.googleapis.com/auth/drive']
 warnings.filterwarnings('ignore')
-token = 'D:\Git\python-projects\google drive terminal\\token.json'
-download_path = 'D:\Git\python-projects\google drive terminal\\'
+token = 'D:\Git\python-projects\DriveClient\\token.json'
+download_path = 'D:\Git\python-projects\DriveClient\\'
+client_credentials = 'D:\Git\python-projects\DriveClient\credentials.json'
 
 
 class DriveClient(object):
     def __init__(self):
-        store = file.Storage(token)
-        creds = store.get()
-        if not creds or creds.invalid:
-            flow = client.flow_from_clientsecrets('D:\Git\python-projects\google drive terminal\credentials.json', SCOPES)
-            creds = tools.run_flow(flow, store)
+        """logs in the client google account in case of logout
+           otherwise, processes the given command
+        """
+        store = file.Storage(token)     # creates credential object of 'token'
+        creds = store.get()             # reads credential aka token
+        if creds is None:
+            flow = client.flow_from_clientsecrets(client_credentials, scopes)  # create 'flow' object for authentication
+            tools.run_flow(flow, store)  # open page in browser, get token after authentication and store it
             print('logged in')
             sys.exit()
         self.service = build('drive', 'v3', http=creds.authorize(Http()))
 
         parser = argparse.ArgumentParser(description='command-line suite for google drive.')
-        parser.add_argument('command', help='subcommand to run', action='store')    
+        parser.add_argument('command', help='sub-command to run', action='store')
         args = parser.parse_args(sys.argv[1:2])
-        try:
-            getattr(self, args.command)()
-        except AttributeError:
+        if not getattr(self, args.command, False):
             print('Invalid command')
             print('for help use: "DriveClient -h" or "DriveClient --help"')
+        else:
+            getattr(self, args.command)()
     
     def logout(self):
         try:
