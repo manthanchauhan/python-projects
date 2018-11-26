@@ -246,6 +246,5 @@ class DriveClient(object):
         request = self.service.files().create(body=metaData, media_body=media, fields='id').execute()
         print('file uploaded successfully')
 
-
 if __name__ == '__main__':
     DriveClient()
