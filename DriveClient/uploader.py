@@ -44,12 +44,14 @@ class DriveClient(object):
         store = file.Storage(token)     # creates credential object of 'token'
         creds = store.get()             # reads credential aka token
         if creds is None:
+            if len(sys.argv) > 1:       # check if command is provided before login
+                print('Please login before proceeding.\nFor login use: "DriveClient"')
+                sys.exit()
             flow = client.flow_from_clientsecrets(client_credentials, scopes)  # create 'flow' object for authentication
             tools.run_flow(flow, store)  # open page in browser, get token after authentication and store it
-            print('logged in')
-            sys.exit()
+            print('Logged in')
+            sys.exit(0)
         self.service = build('drive', 'v3', http=creds.authorize(Http()))
-
         parser = argparse.ArgumentParser(description='command-line suite for google drive.')
         parser.add_argument('command', help='sub-command to run', action='store')
         args = parser.parse_args(sys.argv[1:2])
@@ -58,16 +60,20 @@ class DriveClient(object):
             print('for help use: "DriveClient -h" or "DriveClient --help"')
         else:
             getattr(self, args.command)()
-    
+
     def logout(self):
+        """logout from the current Google account
+        """
         try:
             os.remove(token)
         except FileNotFoundError:
             pass
         print('logged out successfully')
 
-    def listfiles(self):
-        parser = argparse.ArgumentParser(description='view files')
+    def list_files(self):
+        """Show files of Google Drive
+        """
+        parser = argparse.ArgumentParser(description='view files of current Google Drive')
         parser.add_argument('number', help='number of pages to print', action='store', type=int)
         parser.add_argument('-det', '--detailed', help='print file details', action='store_true')
         args = parser.parse_args(sys.argv[2:])
@@ -136,7 +142,7 @@ class DriveClient(object):
         done = False
         while not done:
             status, done = downloader.next_chunk()
-            print('%d'%(status.progress()*100), end='%')
+            # print('%d' % (status.progress()*100), end='%')
             print(' Downloaded')
         if args.address == 'default':
             address = download_path + args.filename
@@ -199,7 +205,7 @@ class DriveClient(object):
         done = False
         while not done:
             status, done = downloader.next_chunk()
-            print('%d'%(status.progress()*100), end='%')
+            # print('%d'%(status.progress()*100), end='%')
             print(' Downloaded')
         if args.address == 'default':
             address = download_path + args.filename + '.' + args.format
@@ -239,6 +245,7 @@ class DriveClient(object):
             media = googleapiclient.http.MediaFileUpload(args.filename, mimetype=MimeType, resumable=True)
         request = self.service.files().create(body=metaData, media_body=media, fields='id').execute()
         print('file uploaded successfully')
+
 
 if __name__ == '__main__':
     DriveClient()
