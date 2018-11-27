@@ -2,6 +2,7 @@
   <dictionary name="manth">
     <words>
       <w>creds</w>
+      <w>tupl</w>
     </words>
   </dictionary>
 </component>
