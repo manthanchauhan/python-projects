@@ -31,7 +31,7 @@ export_dict = {'document': [('html','text/html'), ('zip','application/zip'), ('t
 
 scopes = ['https://www.googleapis.com/auth/drive']
 warnings.filterwarnings('ignore')
-token = 'D:\Git\python-projects\DriveClnt\\token.json'
+token = 'D:\Git\python-projects\DriveClient\\token.json'
 download_path = 'D:\Git\python-projects\DriveClient\\'
 client_credentials = 'D:\Git\python-projects\DriveClient\credentials.json'
 
@@ -44,6 +44,10 @@ class DriveClient(object):
         store = file.Storage(token)     # creates credential object of 'token'
         creds = store.get()             # reads credential aka token
         if creds is None:
+            if len(sys.argv) > 1:
+                print('Please login before proceeding')
+                print('For login use: DriveClient <no_command>')
+                sys.exit()
             flow = client.flow_from_clientsecrets(client_credentials, scopes)  # create 'flow' object for authentication
             tools.run_flow(flow, store)  # open page in browser, get token after authentication and store it
             print('logged in')
@@ -251,7 +255,7 @@ class DriveClient(object):
         if slash == -1:
             name = args.filename
         else:
-            name = args.filename[slash:]
+            name = args.filename[slash + 1:]
         if args.address == 'drive':
             meta_data = {'name': name}
             # mime = MimeTypes()
