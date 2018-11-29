@@ -253,18 +253,19 @@ class DriveClient(object):
         else:
             name = args.filename[slash:]
         if args.address == 'drive':
-            metaData = {'name': name}
-            mime = MimeTypes()
+            meta_data = {'name': name}
+            # mime = MimeTypes()
             url = urllib.request.pathname2url(args.filename)
-            MimeType = mime.guess_type(url)[0]
+            MimeType = MimeTypes().guess_type(url)[0]
         elif args.address == 'folder':
             pass
         if size <= 5*(10**6):
             media = googleapiclient.http.MediaFileUpload(args.filename, mimetype=MimeType)
         else:
             media = googleapiclient.http.MediaFileUpload(args.filename, mimetype=MimeType, resumable=True)
-        request = self.service.files().create(body=metaData, media_body=media, fields='id').execute()
+        request = self.service.files().create(body=meta_data, media_body=media, fields='id').execute()
         print('file uploaded successfully')
+
 
 if __name__ == '__main__':
     DriveClient()
