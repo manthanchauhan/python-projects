@@ -235,7 +235,9 @@ class DriveClient(object):
         print(args.filename + ' was downloaded successfully')
 
     def upload(self):
-        parser = argparse.ArgumentParser()
+        """upload any file to GDrive
+        """
+        parser = argparse.ArgumentParser(description='upload any file to GDrive')
         parser.add_argument('filename', help='name of file to upload', action='store')
         parser.add_argument('address', help='drive: upload in drive, folder: upload in a folder', action='store')
         args = parser.parse_args(sys.argv[2:])
