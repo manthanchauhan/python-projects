@@ -2,7 +2,17 @@
   <dictionary name="manth">
     <words>
       <w>creds</w>
+      <w>docx</w>
+      <w>epub</w>
+      <w>officedocument</w>
+      <w>opendocument</w>
+      <w>openxmlformats</w>
+      <w>pptx</w>
+      <w>presentationml</w>
+      <w>spreadsheetml</w>
       <w>tupl</w>
+      <w>wordprocessingml</w>
+      <w>xlsx</w>
     </words>
   </dictionary>
 </component>

@@ -12,21 +12,22 @@ import urllib.request
 import http
 
 
-export_dict = {'document': [('html','text/html'), ('zip','application/zip'), ('txt','text/plain'), 
-                        ('rtf', 'application/rtf'), ('odt','application/vnd.oasis.opendocument.text'),
-                        ('pdf', 'application/pdf'), ('epub','application/epub+zip'),
-                        ('docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-                        ],
-            'spreadsheet': [('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
-                        ('ods','application/x-vnd.oasis.opendocument.spreadsheet'),('pdf','application/pdf'),
-                        ('csv','text/csv'), ('txt','text/tab-separated-values'),('zip','application/zip'),
-                        ],
-            'presentation': [('pptx','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
-                        ('odp','application/vnd.oasis.opendocument.presentation'), ('pdf','application/pdf'),
-                        ('txt','text/plain')
-                        ],
-            'drawing': [('jpeg','image/jpeg'), ('png','image/png'), ('xml','image/svg+xml'), ('pdf','application/pdf')
-            ]}
+export_dict = {'document': [('html', 'text/html'), ('zip', 'application/zip'), ('txt', 'text/plain'),
+                            ('rtf', 'application/rtf'), ('odt', 'application/vnd.oasis.opendocument.text'),
+                            ('pdf', 'application/pdf'), ('epub', 'application/epub+zip'),
+                            ('docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+                            ],
+               'spreadsheet': [('xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+                               ('ods', 'application/x-vnd.oasis.opendocument.spreadsheet'), ('pdf', 'application/pdf'),
+                               ('csv', 'text/csv'), ('txt', 'text/tab-separated-values'), ('zip', 'application/zip'),
+                               ],
+               'presentation': [('pptx', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'),
+                                ('odp', 'application/vnd.oasis.opendocument.presentation'), ('pdf', 'application/pdf'),
+                                ('txt', 'text/plain')
+                                ],
+               'drawing': [('jpeg', 'image/jpeg'), ('png', 'image/png'), ('xml', 'image/svg+xml'),
+                           ('pdf', 'application/pdf')]
+               }
 
 
 scopes = ['https://www.googleapis.com/auth/drive']
@@ -63,7 +64,8 @@ class DriveClient(object):
         else:
             getattr(self, args.command)()
 
-    def logout(self):
+    @staticmethod
+    def logout():
         """logout from current Google account
         """
         try:
