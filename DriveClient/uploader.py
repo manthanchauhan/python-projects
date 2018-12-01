@@ -30,7 +30,7 @@ export_dict = {'document': [('html', 'text/html'), ('zip', 'application/zip'), (
                }
 
 
-scopes = ['https://www.googleapis.com/auth/drive']
+scopes = ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.appfolder']
 warnings.filterwarnings('ignore')
 token = 'D:\Git\python-projects\DriveClient\\token.json'
 download_path = 'D:\Git\python-projects\DriveClient\\'
@@ -42,6 +42,7 @@ class DriveClient(object):
         """logs in the client google account in case of logout
            otherwise, processes the given command
         """
+        self.parent = 'drive'
         store = file.Storage(token)     # creates credential object of 'token'
         creds = store.get()             # reads credential aka token
         if creds is None:
@@ -100,7 +101,9 @@ class DriveClient(object):
             param = {}
             if page_token:
                 param['pageToken'] = page_token
+            param['q'] = '10Ou72OmGo_GdsUePfiP1vw1Yi_swUJMu in parents'
             files = self.service.files().list(**param).execute()
+            # print(files)
             if current_page >= pages[0]:
                 files_new = files['files']
                 if not args.detailed:
@@ -155,6 +158,7 @@ class DriveClient(object):
             sys.exit()
 
         request = self.service.files().get_media(fileId=file_id)    # initiate download
+        # print(request.get('parents'))
         fh = io.BytesIO()
         downloader = googleapiclient.http.MediaIoBaseDownload(fh, request)
         done = False
@@ -224,6 +228,8 @@ class DriveClient(object):
             print('conversion format either invalid or unsupported by DriveClient')
             sys.exit()
         request = self.service.files().export_media(fileId=file_id, mimeType=MimeType)
+        file = self.service.parents().list(fileId=file_id).execute()
+        print(file)
         fh = io.BytesIO()
         downloader = googleapiclient.http.MediaIoBaseDownload(fh, request)
         done = False
