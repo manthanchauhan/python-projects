@@ -1,23 +1,5 @@
 {
     "extensions": {
-        "drawing": [
-            [
-                "jpeg",
-                "image/jpeg"
-            ],
-            [
-                "png",
-                "image/png"
-            ],
-            [
-                "xml",
-                "image/svg+xml"
-            ],
-            [
-                "pdf",
-                "application/pdf"
-            ]
-        ],
         "presentation": [
             [
                 "pptx",
@@ -95,19 +77,36 @@
                 "zip",
                 "application/zip"
             ]
+        ],
+        "drawing": [
+            [
+                "jpeg",
+                "image/jpeg"
+            ],
+            [
+                "png",
+                "image/png"
+            ],
+            [
+                "xml",
+                "image/svg+xml"
+            ],
+            [
+                "pdf",
+                "application/pdf"
+            ]
         ]
     },
-    "scopes": [
-        "https://www.googleapis.com/auth/drive",
-        "https://www.googleapis.com/auth/drive.appfolder"
-    ],
     "paths": {
+        "credentials": "D:\\Git\\python-projects\\DriveClient\\credentials.json",
         "download": "D:\\Git\\python-projects\\DriveClient\\",
-        "token": "D:\\Git\\python-projects\\DriveClient\\token.json",
-        "credentials": "D:\\Git\\python-projects\\DriveClient\\credentials.json"
+        "token": "D:\\Git\\python-projects\\DriveClient\\token.json"
     },
+    "scopes": [
+        "https://www.googleapis.com/auth/drive"
+    ],
     "config": {
         "print_dir": true,
-        "parent": "drive"
+        "parent": "0AE7VQelxqcViUk9PVA"
     }
 }

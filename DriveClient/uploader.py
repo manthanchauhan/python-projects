@@ -77,16 +77,19 @@ class DriveClient(object):
         self.config['print_dir'] = not self.config['print_dir']
 
     def list_files(self):
-        """list files stored in current Google Account (GDrive)
+        """list files stored in current Google Account directory (GDrive)
         """
         parser = argparse.ArgumentParser(description='view files')
         parser.add_argument('pages', help='range of pages to print ie, "page_x"-"page_y" (both inclusive)',
                             action='store', type=str)
         parser.add_argument('-det', '--detailed', help='print file details', action='store_true')
+        parser.add_argument('-dir', '--directory', help='show only directories', action='store_true')
         args = parser.parse_args(sys.argv[2:])
         pages = args.pages.split('-')
         if len(pages) != 2:
-            print('Invalid range format.\nTo se help use: DriveClient list_files -h')
+            print('Invalid range format')
+            if self.config['print_dir']:
+                print('To se help use: DriveClient list_files -h')
             sys.exit()
         pages = [int(s) for s in pages]
         if pages[1] < pages[0] or pages[0] < 0 or pages[1] < 0:
@@ -99,32 +102,43 @@ class DriveClient(object):
             current_page += 1
             if current_page > pages[1]:
                 break
-            param = {}
-            if page_token:
-                param['pageToken'] = page_token
-            param['q'] = '10Ou72OmGo_GdsUePfiP1vw1Yi_swUJMu in parents'
-            files = self.service.files().list(**param).execute()
-            # print(files)
+            files = self.service.files().list(q='\'' + str(self.config['parent']) + '\' in parents', spaces='drive',
+                                              fields='nextPageToken, items(title, createdDate, lastViewedByMeDate, '
+                                                     'modifiedDate,ownerNames, editable, mimeType, parents)',
+                                              pageToken=page_token).execute()
             if current_page >= pages[0]:
-                files_new = files['files']
+                items = files['items']
                 if not args.detailed:
-                    result.extend([File['name'] for File in files_new])
+                    if args.directory:
+                        result.extend([File['title'] for File in items if 'folder' in File['mimeType']])
+                    else:
+                        result.extend([File['title'] for File in items])
                 else:
-                    result.extend(files_new)
+                    if args.directory:
+                        result.extend([item for item in items if 'folder' in item['mimeType']])
+                    else:
+                        result.extend(items)
             page_token = files.get('nextPageToken')
             if not page_token:
                 break
-        for i in range(0, len(result)):
-            try:
-                if not args.detailed:
+
+        for i in range(0, len(result)):         # presentation of files to user
+            if not args.detailed:
+                try:
                     print('[' + str(i+1 + (pages[0]-1)*100) + '] ' + result[i])
-                else:
-                    print('[' + str(i+1 + (pages[0]-1)*100) + '] ' + result[i]['name'])
-                    for tpl in result[i]:
-                        if tpl != 'name':
-                            print('\t' + tpl + ' : ' + str(result[i][tpl]))
-            except UnicodeEncodeError:
-                print('[' + str(i+1 + (pages[0]-1)*100) + '] -----<encoding error in filename>-----')
+                except UnicodeEncodeError:
+                    print('[' + str(i + 1 + (pages[0] - 1) * 100) + '] -----<encoding error in filename>-----')
+            else:
+                try:
+                    print('[' + str(i+1 + (pages[0]-1)*100) + '] ' + result[i]['title'])
+                except UnicodeEncodeError:
+                    print('[' + str(i + 1 + (pages[0] - 1) * 100) + '] -----<encoding error in filename>-----')
+                for key in result[i]:
+                    if key != 'title':
+                        try:
+                            print('\t' + key + ' : ' + str(result[i][key]))
+                        except UnicodeEncodeError:
+                            print('\t' + '-----<encoding error in ' + key + '>-----')
 
     def download(self):
         """download a file from GDrive
