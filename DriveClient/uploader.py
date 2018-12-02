@@ -13,29 +13,7 @@ import json
 import http
 
 
-export_dict = {'document': [('html', 'text/html'), ('zip', 'application/zip'), ('txt', 'text/plain'),
-                            ('rtf', 'application/rtf'), ('odt', 'application/vnd.oasis.opendocument.text'),
-                            ('pdf', 'application/pdf'), ('epub', 'application/epub+zip'),
-                            ('docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-                            ],
-               'spreadsheet': [('xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
-                               ('ods', 'application/x-vnd.oasis.opendocument.spreadsheet'), ('pdf', 'application/pdf'),
-                               ('csv', 'text/csv'), ('txt', 'text/tab-separated-values'), ('zip', 'application/zip'),
-                               ],
-               'presentation': [('pptx', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'),
-                                ('odp', 'application/vnd.oasis.opendocument.presentation'), ('pdf', 'application/pdf'),
-                                ('txt', 'text/plain')
-                                ],
-               'drawing': [('jpeg', 'image/jpeg'), ('png', 'image/png'), ('xml', 'image/svg+xml'),
-                           ('pdf', 'application/pdf')]
-               }
-
-
-scopes = ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.appfolder']
 warnings.filterwarnings('ignore')
-token = 'D:\Git\python-projects\DriveClient\\token.json'
-download_path = 'D:\Git\python-projects\DriveClient\\'
-client_credentials = 'D:\Git\python-projects\DriveClient\credentials.json'
 config_file = 'D:\Git\python-projects\DriveClient\config.json'
 
 
@@ -44,57 +22,59 @@ class DriveClient(object):
         """logs in the client google account in case of logout
            otherwise, processes the given command
         """
-        self.config = config_file
-        if os.path.isfile(self.config):
-            with open(self.config) as con:
-                self.config_dict = json.load(con)
-        self.print_directions = self.config_dict['print_dir']
-        self.parent = self.config_dict['parent']
-        self.extensions_dict = export_dict
-        self.download_path = download_path
-        self.creds_file = client_credentials
-        self.scope = scopes
-        self.token = token
-        store = file.Storage(self.token)     # creates credential object of 'token'
+        self.config_file = config_file              # loads configuration dict
+        if os.path.isfile(self.config_file):
+            with open(self.config_file) as con:
+                config_dict = json.load(con)
+
+        self.config = config_dict['config']            # login
+        self.extensions = config_dict['extensions']
+        self.paths = config_dict['paths']
+        self.scopes = config_dict['scopes']
+        store = file.Storage(self.paths['token'])     # creates credential object of 'token'
         creds = store.get()             # reads credential aka token
         if creds is None:
             if len(sys.argv) > 1:
-                if self.print_directions:
+                if self.config['print_dir']:
                     print('Please login before proceeding')
                 print('For login use: DriveClient <no_command>')
                 sys.exit()
             # create 'flow' object for authentication
-            flow = client.flow_from_clientsecrets(self.creds_file, self.scope)
+            flow = client.flow_from_clientsecrets(self.paths['credentials'], self.scopes)
             tools.run_flow(flow, store)  # open page in browser, get token after authentication and store it
-            if self.print_directions:
+            if self.config['print_dir']:
                 print('logged in')
             sys.exit()
         self.service = build('drive', 'v2', http=creds.authorize(Http()))
 
-        parser = argparse.ArgumentParser(description='command-line suite for google drive.')
+        parser = argparse.ArgumentParser(description='command-line suite for google drive.')  # parse arguments
         parser.add_argument('command', help='sub-command to run', action='store')
         args = parser.parse_args(sys.argv[1:2])
         if not getattr(self, args.command, False):
             print('Invalid command')
-            if self.print_directions:
+            if self.config['print_dir']:
                 print('for help use: "DriveClient -h" or "DriveClient --help"')
         else:
             getattr(self, args.command)()
-        with open(self.config, 'w') as con:
-            json.dump(self.config_dict, con)
+
+        with open(self.config_file, 'w') as con:            # update configuration file
+            string = json.dumps(config_dict, indent=4, separators=(',', ': '), sort_keys=False)
+            con.write(string)
 
     def logout(self):
         """logout from current Google account
         """
         try:
-            os.remove(self.token)
+            os.remove(self.paths['token'])
         except FileNotFoundError:
             pass
-        if self.print_directions:
+        if self.config['print_dir']:
             print('logged out successfully')
 
-    def pd(self):
-        self.config_dict['print_dir'] = not self.config_dict['print_dir']
+    def p_dir(self):
+        """toggles 'print_dir' to show/hide user directions
+        """
+        self.config['print_dir'] = not self.config['print_dir']
 
     def list_files(self):
         """list files stored in current Google Account (GDrive)
