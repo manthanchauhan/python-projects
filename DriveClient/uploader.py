@@ -10,7 +10,6 @@ import io
 from mimetypes import MimeTypes
 import urllib.request
 import json
-import http
 
 
 warnings.filterwarnings('ignore')
@@ -44,7 +43,7 @@ class DriveClient(object):
             tools.run_flow(flow, store)  # open page in browser, get token after authentication and store it
             if self.config['print_dir']:
                 print('logged in')
-            sys.exit()
+            sys.exit(0)
         self.service = build('drive', 'v2', http=creds.authorize(Http()))
 
         parser = argparse.ArgumentParser(description='command-line suite for google drive.')  # parse arguments
@@ -56,7 +55,10 @@ class DriveClient(object):
                 print('for help use: "DriveClient -h" or "DriveClient --help"')
         else:
             getattr(self, args.command)()
-
+        config_dict['config'] = self.config
+        config_dict['extensions'] = self.extensions
+        config_dict['paths'] = self.paths
+        config_dict['scopes'] = self.scopes
         with open(self.config_file, 'w') as con:            # update configuration file
             string = json.dumps(config_dict, indent=4, separators=(',', ': '), sort_keys=False)
             con.write(string)
@@ -76,8 +78,38 @@ class DriveClient(object):
         """
         self.config['print_dir'] = not self.config['print_dir']
 
+    def cd(self):
+        """changes current working directory
+        """
+        parser = argparse.ArgumentParser(description='change working user directory')
+        parser.add_argument('destination', help='new destination to make parent directory', action='store', type=str)
+        if len(sys.argv[1:]) == 1:
+            current_parent = self.config['parent']
+            parent = self.service.parents().list(fileId=current_parent).execute()
+            self.config['parent'] = parent['items'][0]['id']
+        else:
+            args = parser.parse_args(sys.argv[2:])
+            if args.destination == 'root':
+                self.config['parent'] = self.config['root']
+                return
+            page_token = None
+            while True:
+                children = self.service.files().list(q='\''+str(self.config['parent'])+'\' in parents',
+                                                     fields='nextPageToken, items(title, id)',
+                                                     pageToken=page_token).execute()
+                items = children['items']
+                for item in items:
+                    if item['title'] == args.destination:
+                        self.config['parent'] = item['id']
+                        return
+                page_token = children.get('nextPageToken')
+                if not page_token:
+                    break
+            if self.config['print_dir']:
+                print('invalid directory name')
+
     def list_files(self):
-        """list files stored in current Google Account directory (GDrive)
+        """list files stored in current Google Account (GDrive) directory
         """
         parser = argparse.ArgumentParser(description='view files')
         parser.add_argument('pages', help='range of pages to print ie, "page_x"-"page_y" (both inclusive)',
@@ -104,7 +136,7 @@ class DriveClient(object):
                 break
             files = self.service.files().list(q='\'' + str(self.config['parent']) + '\' in parents', spaces='drive',
                                               fields='nextPageToken, items(title, createdDate, lastViewedByMeDate, '
-                                                     'modifiedDate,ownerNames, editable, mimeType, parents)',
+                                                     'modifiedDate, ownerNames, editable, mimeType, parents, id)',
                                               pageToken=page_token).execute()
             if current_page >= pages[0]:
                 items = files['items']
@@ -122,6 +154,9 @@ class DriveClient(object):
             if not page_token:
                 break
 
+        if len(result) == 0:
+            if self.config['print_dir']:
+                print('parent directory is empty')
         for i in range(0, len(result)):         # presentation of files to user
             if not args.detailed:
                 try:
@@ -292,6 +327,25 @@ class DriveClient(object):
         self.service.files().create(body=meta_data, media_body=media, fields='id').execute()
         print('file uploaded successfully')
 
+    def translation_dict(self):
+        try:
+            os.remove(self.paths['translation'])
+        except FileNotFoundError:
+            pass
+        page_token = None
+        translation_dict = {}
+        while True:
+            files = self.service.files().list(fields='nextPageToken, items(title, id)', pageToken=page_token).execute()
+            for item in files['items']:
+                translation_dict[item['title']] = item
+            page_token = files.get('nextPageToken')
+            if not page_token:
+                break
+        with open(self.paths['translation'], 'w') as f:
+            string = json.dumps(translation_dict, indent=4, separators=(',', ':'), sort_keys=True)
+            f.write(string)
+
 
 if __name__ == '__main__':
     DriveClient()
+
