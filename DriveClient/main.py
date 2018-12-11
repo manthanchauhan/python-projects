@@ -84,6 +84,10 @@ class DriveClient(object):
         if len(sys.argv[1:]) == 1:
             current_parent = self.config['parent']
             parent = self.service.parents().list(fileId=current_parent).execute()
+            if len(parent['items']) == 0:
+                if self.config['print_dir']:
+                    print('root directory reached')
+                return
             self.config['parent'] = parent['items'][0]['id']
         else:
             args = parser.parse_args(sys.argv[2:])
