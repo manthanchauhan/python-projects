@@ -90,21 +90,29 @@ class DriveClient(object):
             if args.destination == 'root':
                 self.config['parent'] = self.config['root']
                 return
+            if args.destination == 'this':
+                parent = self.service.files().get(fileId=self.config['parent']).execute()
+                print(parent['title'])
+                return
             page_token = None
             while True:
-                children = self.service.files().list(q='\''+str(self.config['parent'])+'\' in parents',
-                                                     fields='nextPageToken, items(title, id)',
-                                                     pageToken=page_token).execute()
+                children = self.service.files().list(q='\''+str(self.config['parent'])+'\' in parents and title = '
+                                                     '\'' + args.destination + '\'', fields='nextPageToken, '
+                                                     'items(title, id)', pageToken=page_token).execute()
                 items = children['items']
-                for item in items:
-                    if item['title'] == args.destination:
-                        self.config['parent'] = item['id']
-                        return
+                if len(items) != 0:
+                    self.config['parent'] = items[0]['id']
+                    return
                 page_token = children.get('nextPageToken')
-                if not page_token:
-                    break
-            if self.config['print_dir']:
-                print('invalid directory name')
+                if page_token is None:
+                    print('invalid destination')
+                    return
+
+    # def find(self):
+    #     """find a specified file in the GDrive
+    #     """
+    #     parser = argparse.ArgumentParser(description='find a specified file')
+    #     parser.add_argument('filename', help='name of the file to be searched')
 
     def list(self):
         """list files stored in current Google Account (GDrive) directory
@@ -181,50 +189,38 @@ class DriveClient(object):
         parser.add_argument('address', help='location to download file, "default" for default location', action='store')
         args = parser.parse_args(sys.argv[2:])
         page_token = None
-        file_id = None
-
-        while True:             # get file ID from filename
-            param = {}
-            if page_token:
-                param['pageToken'] = page_token
-            files = self.service.files().list(q='\'' + str(self.config['parent']) + '\' in parents',
-                                              fields='nextPageToken, items(title, id, mimeType)',
-                                              pageToken=page_token).execute()
+        while True:
+            files = self.service.files().list(q='\'' + str(self.config['parent']) + '\' in parents and title = \'' +
+                                                args.filename + '\'', fields='nextPageToken, items(id, mimeType)',
+                                                pageToken=page_token).execute()
             items = files['items']
-            for item in items:
-                if item['title'] == args.filename:
-                    file_id = item['id']
-                    if item['mimeType'].find('google') != -1:
-                        print('use export method for google docs')
-                        sys.exit()
-                    break
-            if file_id is not None:
-                break
+            if len(items) != 0:
+                file_id = items[0]['id']
+                mime_type = items[0]['mimeType']
+                if mime_type.find('google') != -1:
+                    print('use export method for google docs')
+                    return
+                request = self.service.files().get_media(fileId=file_id)    # initiate download
+                fh = io.BytesIO()
+                downloader = googleapiclient.http.MediaIoBaseDownload(fh, request)
+                done = False
+                while not done:
+                    status, done = downloader.next_chunk()
+                    print('%d' % (status.progress()*100), end='%')
+                    print(' Downloaded')
+                if args.address == 'default':               # save downloaded file
+                    address = self.paths['download'] + args.filename
+                else:
+                    address = args.address
+                with open(address, 'wb') as File:
+                    File.write(fh.getvalue())
+                File.close()
+                print(args.filename + ' was downloaded successfully')
+                return
             page_token = files.get('nextPageToken')
-            if not page_token:
-                break
-        if file_id is None:
-            print('file not found')
-            return
-
-        request = self.service.files().get_media(fileId=file_id)    # initiate download
-        # print(request.get('parents'))
-        fh = io.BytesIO()
-        downloader = googleapiclient.http.MediaIoBaseDownload(fh, request)
-        done = False
-        while not done:
-            status, done = downloader.next_chunk()
-            print('%d' % (status.progress()*100), end='%')
-            print(' Downloaded')
-
-        if args.address == 'default':               # save downloaded file
-            address = self.paths['download'] + args.filename
-        else:
-            address = args.address
-        with open(address, 'wb') as File:
-            File.write(fh.getvalue())
-        File.close()
-        print(args.filename + ' was downloaded successfully')
+            if page_token is None:
+                print('requested file not found')
+                return
 
     def export(self):
         """export any Google document to another system compatible format
@@ -235,66 +231,53 @@ class DriveClient(object):
         parser.add_argument('address', help='address to export, "default" for default address', action='store')
         args = parser.parse_args(sys.argv[2:])
         page_token = None
-        file_id = None
-        mime_type = None
-        while True:                 # get file ID and Mime Type form filename
-            param = {}
-            if page_token:
-                param['pageToken'] = page_token
-            files = self.service.files().list(q='\'' + str(self.config['parent']) + '\' in parents',
-                                              fields='nextPageToken, items(title, id, mimeType)',
+        while True:
+            files = self.service.files().list(q='\'' + str(self.config['parent']) + '\' in parents and title = \'' +
+                                              args.filename + '\'', fields='nextPageToken, items(id, mimeType)',
                                               pageToken=page_token).execute()
-            items = files['items']
-            for item in items:
-                if item['title'] == args.filename:
-                    mime_type = item['mimeType']
-                    file_id = item['id']
-                    if item['mimeType'].find('google') == -1:
-                        print('export is only used for google docs, use download otherwise.')
-                        return
-                    if item['mimeType'].find('folder') != -1:
-                        print('folders cannot be exported')
-                        return
-                    break
-            if file_id is not None:
-                break
+            items = file['items']
+            if len(items) != 0:
+                file_id = items[0]['id']
+                mime_type = items[0]['mimeType']
+                if mime_type.find('google') == -1:
+                    print('export is only used for google docs, use download otherwise.')
+                    return
+                if mime_type.find('folder') != -1:
+                    print('folders cannot be exported')
+                    return
+                file_type = mime_type[28:]           # determine present file format
+                if file_type not in self.extensions.keys():
+                    print('file format either invalid or unsupported by DriveClient')
+                    return
+                mime_type = None                     # determine required file format
+                for tupl in self.extensions[file_type]:
+                    if tupl[0] == args.format:
+                        mime_type = tupl[1]
+                        break
+                if mime_type is None:
+                    print('conversion format either invalid or unsupported by DriveClient')
+                    return
+                request = self.service.files().export_media(fileId=file_id, mimeType=mime_type)
+                fh = io.BytesIO()
+                downloader = googleapiclient.http.MediaIoBaseDownload(fh, request)
+                done = False
+                while not done:
+                    status, done = downloader.next_chunk()
+                    print('%d' %(status.progress()*100), end='%')
+                    print(' Downloaded')
+                if args.address == 'default':
+                    address = self.paths['download'] + args.filename + '.' + args.format
+                else:
+                    address = args.address + '.' + args.format
+                with open(address, 'wb') as File:
+                    File.write(fh.getvalue())
+                File.close()
+                print(args.filename + ' was exported successfully')
+                return
             page_token = files.get('nextPageToken')
-            if not page_token:
-                break
-        if file_id is None:
-            print('file not found')
-            return
-
-        file_type = mime_type[28:]           # determine present file format
-        if file_type not in self.extensions.keys():
-            print('file format either invalid or unsupported by DriveClient')
-            return
-
-        mime_type = None                     # determine required file format
-        for tupl in self.extensions[file_type]:
-            if tupl[0] == args.format:
-                mime_type = tupl[1]
-                break
-
-        if mime_type is None:
-            print('conversion format either invalid or unsupported by DriveClient')
-            return
-        request = self.service.files().export_media(fileId=file_id, mimeType=mime_type)
-        fh = io.BytesIO()
-        downloader = googleapiclient.http.MediaIoBaseDownload(fh, request)
-        done = False
-        while not done:
-            status, done = downloader.next_chunk()
-            print('%d' %(status.progress()*100), end='%')
-            print(' Downloaded')
-        if args.address == 'default':
-            address = self.paths['download'] + args.filename + '.' + args.format
-        else:
-            address = args.address + '.' + args.format
-        with open(address, 'wb') as File:
-            File.write(fh.getvalue())
-        File.close()
-        print(args.filename + ' was exported successfully')
+            if page_token is None:
+                print('requested file not found')
+                return
 
     def upload(self):
         """upload any file to GDrive
@@ -307,7 +290,6 @@ class DriveClient(object):
         except FileNotFoundError:
             print('file does not exists')
             return
-        size = stats.st_size
         slash = args.filename.rfind('\\')
         if slash == -1:
             name = args.filename

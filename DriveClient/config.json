@@ -1,15 +1,4 @@
 {
-    "config": {
-        "root": "0AE7VQelxqcViUk9PVA",
-        "print_dir": true,
-        "parent": "10Ou72OmGo_GdsUePfiP1vw1Yi_swUJMu"
-    },
-    "paths": {
-        "token": "D:\\Git\\python-projects\\DriveClient\\token.json",
-        "translation": "D:\\Git\\python-projects\\DriveClient\\translation_dict.json",
-        "credentials": "D:\\Git\\python-projects\\DriveClient\\credentials.json",
-        "download": "D:\\Git\\python-projects\\DriveClient\\"
-    },
     "extensions": {
         "document": [
             [
@@ -107,6 +96,17 @@
                 "application/zip"
             ]
         ]
+    },
+    "config": {
+        "root": "0AE7VQelxqcViUk9PVA",
+        "print_dir": true,
+        "parent": "1mawprtLcPpGE8XnEVr14HGJ4y1H6SO4R"
+    },
+    "paths": {
+        "token": "D:\\Git\\python-projects\\DriveClient\\token.json",
+        "translation": "D:\\Git\\python-projects\\DriveClient\\translation_dict.json",
+        "download": "D:\\Git\\python-projects\\DriveClient\\",
+        "credentials": "D:\\Git\\python-projects\\DriveClient\\credentials.json"
     },
     "scopes": [
         "https://www.googleapis.com/auth/drive"
