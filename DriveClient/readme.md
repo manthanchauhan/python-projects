@@ -16,7 +16,7 @@ use:
 Python -u "main.py" cd *(move to the parent directory of current directory)*  
 Python -u "main.py" cd <childname> *(move to the child directory)*  
 Python -u "main.py" cd root *(move to the root of GDrive)*  
-Python -u "main.py" cd this *(prints the name of the current directory of GDrive)*
+Python -u "main.py" cd this *(prints the name of the current directory of GDrive)*  
 ####4. list:  
 lists the contents of the current GDrive directory.  
 use:  
