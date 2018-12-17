@@ -317,6 +317,39 @@ class DriveClient(object):
         self.service.files().insert(body=meta_data, media_body=media).execute()
         print('file uploaded successfully')
 
+    def find(self):
+        parser = argparse.ArgumentParser(description='find any file with filename')
+        parser.add_argument('filename', help='name of the file to be searched', action='store')
+        parser.add_argument('-det', '--details', help='show the details of the file', action='store_true')
+        args = parser.parse_args(sys.argv[2:])
+        page_token = None
+        while True:
+            files = self.service.files().list(q='title contains \' ' + args.filename + '\'', fields='nextPageToken,'
+                                              ' items(title, id, mimeType, modifiedDate, ownerNames)', pageToken=
+                                              page_token).execute()
+            items = files['items']
+            if len(items) != 0:
+                for i in range(0, len(items)):
+                    try:
+                        print('[' + str(i+1) + '] ' + items[i]['title'])
+                    except UnicodeEncodeError:
+                        print('[' + str(i+1) + '] -----<encoding error in filename>-----')
+                    if args.details:
+                        for key in items[i]:
+                            if key != 'title':
+                                try:
+                                    print('\t' + key + ' : ' + str(items[i][key]))
+                                except UnicodeEncodeError:
+                                    print('\t' + '-----<encoding error in ' + key + '>-----')
+                page_token = files.get('nextPageToken')
+                if page_token is None:
+                    return
+                continue
+            else:
+                return
+
+
+
     # def translation_dict(self):
     #     try:
     #         os.remove(self.paths['translation'])

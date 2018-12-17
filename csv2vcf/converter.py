@@ -19,7 +19,7 @@ def convert_to_vcf(datafile):
     os.rename(outputfile, datafile[:-3] + 'vcf')
 
 if __name__=='__main__':
-    datafile = 'D:\Git\python-projects\csv2vcf\data.csv'
+    datafile = 'C:\\Users\\manth\\OneDrive\\Techtronix\\Recruitment.csv'
     convert_to_vcf(datafile)    
 
 

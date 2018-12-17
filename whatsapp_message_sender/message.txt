@@ -1,4 +1,2 @@
-Hi *${name}*,
-We *Techtronix*, need a little favor from you.
-Please print your name on 16x2 alphanumeric LCD and send a *screenshot* of *proteus simulation*.
-It'll be fun.
+Hi ${name},
+This is to inform you that *Task 1* will be uploaded on 25/12/2018. To abort your participation please reply to this message with 'N'.
