@@ -112,12 +112,6 @@ class DriveClient(object):
                     print('invalid destination')
                     return
 
-    # def find(self):
-    #     """find a specified file in the GDrive
-    #     """
-    #     parser = argparse.ArgumentParser(description='find a specified file')
-    #     parser.add_argument('filename', help='name of the file to be searched')
-
     def list(self):
         """list files stored in current Google Account (GDrive) directory
         """
