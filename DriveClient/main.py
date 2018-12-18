@@ -317,12 +317,15 @@ class DriveClient(object):
         parser.add_argument('-det', '--details', help='show the details of the file', action='store_true')
         args = parser.parse_args(sys.argv[2:])
         page_token = None
+        moved = False
         while True:
             files = self.service.files().list(q='title contains \' ' + args.filename + '\'', fields='nextPageToken,'
-                                              ' items(title, id, mimeType, modifiedDate, ownerNames)', pageToken=
-                                              page_token).execute()
+                                              ' items(title, parents, id, mimeType, modifiedDate, ownerNames)',
+                                              pageToken=page_token).execute()
             items = files['items']
             if len(items) != 0:
+                if not moved:
+                    self.config['parent'] = items[0]['parents'][0]['id']
                 for i in range(0, len(items)):
                     try:
                         print('[' + str(i+1) + '] ' + items[i]['title'])

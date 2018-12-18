@@ -1,29 +1,21 @@
 {
-    "config": {
-        "parent": "0AE7VQelxqcViUk9PVA",
-        "root": "0AE7VQelxqcViUk9PVA",
-        "print_dir": true
-    },
-    "scopes": [
-        "https://www.googleapis.com/auth/drive"
-    ],
     "extensions": {
-        "presentation": [
+        "drawing": [
             [
-                "pptx",
-                "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                "jpeg",
+                "image/jpeg"
             ],
             [
-                "odp",
-                "application/vnd.oasis.opendocument.presentation"
+                "png",
+                "image/png"
+            ],
+            [
+                "xml",
+                "image/svg+xml"
             ],
             [
                 "pdf",
                 "application/pdf"
-            ],
-            [
-                "txt",
-                "text/plain"
             ]
         ],
         "spreadsheet": [
@@ -50,6 +42,24 @@
             [
                 "zip",
                 "application/zip"
+            ]
+        ],
+        "presentation": [
+            [
+                "pptx",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+            ],
+            [
+                "odp",
+                "application/vnd.oasis.opendocument.presentation"
+            ],
+            [
+                "pdf",
+                "application/pdf"
+            ],
+            [
+                "txt",
+                "text/plain"
             ]
         ],
         "document": [
@@ -85,30 +95,20 @@
                 "docx",
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             ]
-        ],
-        "drawing": [
-            [
-                "jpeg",
-                "image/jpeg"
-            ],
-            [
-                "png",
-                "image/png"
-            ],
-            [
-                "xml",
-                "image/svg+xml"
-            ],
-            [
-                "pdf",
-                "application/pdf"
-            ]
         ]
     },
+    "scopes": [
+        "https://www.googleapis.com/auth/drive"
+    ],
+    "config": {
+        "root": "0AE7VQelxqcViUk9PVA",
+        "print_dir": true,
+        "parent": "1wNvjLFTMQUb6umJsiLE4-Q9SOF6miLVr"
+    },
     "paths": {
-        "translation": "D:\\Git\\python-projects\\DriveClient\\translation_dict.json",
         "download": "D:\\Git\\python-projects\\DriveClient\\",
+        "credentials": "D:\\Git\\python-projects\\DriveClient\\credentials.json",
         "token": "D:\\Git\\python-projects\\DriveClient\\token.json",
-        "credentials": "D:\\Git\\python-projects\\DriveClient\\credentials.json"
+        "translation": "D:\\Git\\python-projects\\DriveClient\\translation_dict.json"
     }
 }
