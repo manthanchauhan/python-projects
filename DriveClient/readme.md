@@ -1,7 +1,6 @@
 # Readme for DriveClient
 
-Common usage: Python -u "main.py" **command** **input** **arguments**  
-**Login**: Python -u "main.py" *(No Command for Login)*
+**Login**: `Python -u "main.py"` *(No Command for Login)*
 
 ## Commands:  
 #### 1. logout: 
