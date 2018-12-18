@@ -31,13 +31,13 @@ use:
 #### 6. export:  
 download any google document in any supported format.  
 use:  
-`Python -u "main.py" <filename> <required format> <destination address>` *(gives error if format is unsupported)*  
-`Python -u "main.py" <filename> <required format> default`  
+`Python -u "main.py" export <filename> <required format> <destination address>` *(gives error if format is unsupported)*  
+`Python -u "main.py" export <filename> <required format> default`  
 #### 7. upload:
 upload any file to current GDrive directory.  
 use:  
 `Python -u "main.py" upload <filename>`  
-####8. find:  
+#### 8. find:  
 finds a file and moves to the directory containing the file  
 use:  
 `Python -u "main.py" find <filename>`   
