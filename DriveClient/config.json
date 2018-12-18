@@ -1,0 +1,114 @@
+{
+    "extensions": {
+        "drawing": [
+            [
+                "jpeg",
+                "image/jpeg"
+            ],
+            [
+                "png",
+                "image/png"
+            ],
+            [
+                "xml",
+                "image/svg+xml"
+            ],
+            [
+                "pdf",
+                "application/pdf"
+            ]
+        ],
+        "spreadsheet": [
+            [
+                "xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            ],
+            [
+                "ods",
+                "application/x-vnd.oasis.opendocument.spreadsheet"
+            ],
+            [
+                "pdf",
+                "application/pdf"
+            ],
+            [
+                "csv",
+                "text/csv"
+            ],
+            [
+                "txt",
+                "text/tab-separated-values"
+            ],
+            [
+                "zip",
+                "application/zip"
+            ]
+        ],
+        "presentation": [
+            [
+                "pptx",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+            ],
+            [
+                "odp",
+                "application/vnd.oasis.opendocument.presentation"
+            ],
+            [
+                "pdf",
+                "application/pdf"
+            ],
+            [
+                "txt",
+                "text/plain"
+            ]
+        ],
+        "document": [
+            [
+                "html",
+                "text/html"
+            ],
+            [
+                "zip",
+                "application/zip"
+            ],
+            [
+                "txt",
+                "text/plain"
+            ],
+            [
+                "rtf",
+                "application/rtf"
+            ],
+            [
+                "odt",
+                "application/vnd.oasis.opendocument.text"
+            ],
+            [
+                "pdf",
+                "application/pdf"
+            ],
+            [
+                "epub",
+                "application/epub+zip"
+            ],
+            [
+                "docx",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            ]
+        ]
+    },
+    "scopes": [
+        "https://www.googleapis.com/auth/drive"
+    ],
+    "config": {
+        "root": "0AE7VQelxqcViUk9PVA",
+        "print_dir": true,
+        "parent": "1wNvjLFTMQUb6umJsiLE4-Q9SOF6miLVr"
+    },
+    "paths": {
+        "download": "D:\\Git\\python-projects\\DriveClient\\",
+        "credentials": "D:\\Git\\python-projects\\DriveClient\\credentials.json",
+        "token": "D:\\Git\\python-projects\\DriveClient\\token.json",
+        "translation": "D:\\Git\\python-projects\\DriveClient\\translation_dict.json"
+    }
+}
